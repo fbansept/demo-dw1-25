@@ -9,19 +9,19 @@
     max-width: 400px;
     width: 100%;
   }
-}
 
-.bouton {
-  background-color: blue;
-  color: white;
-  padding: 0.5em;
-  border-radius: 5px;
-  user-select: none;
-  cursor: pointer;
-  width: fit-content;
+  .bouton {
+    background-color: blue;
+    color: white;
+    padding: 0.5em;
+    border-radius: 5px;
+    user-select: none;
+    cursor: pointer;
+    width: fit-content;
 
-  &:hover {
-    background-color: rgba(54, 23, 190, 0.583);
+    &:hover {
+      background-color: rgba(54, 23, 190, 0.583);
+    }
   }
 }
 
@@ -62,10 +62,54 @@
     display: flex;
     height: 100px;
 
+    .bouton {
+      opacity: 0;
+      border-radius : 10px;
+      position: absolute;
+      background-color: cornflowerblue;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      line-height: 17px;
+      color: white;
+      user-select: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #4675c6;
+      }
+
+      &.bouton-plus {
+        top: 3px;
+        right: 3px;
+      }
+
+      &.bouton-moins {
+        bottom: 3px;
+        right: 3px;
+      }
+
+      &.bouton-supprimer {
+        bottom: 3px;
+        left: 3px;
+        background-color: #ff0000;
+
+        &:hover {
+          background-color: #b50404;
+        }
+      }
+    }
+
     .image,
     .en-tete {
       width: 100px;
       height: 100px;
+      position: relative;
+
+      &:hover .bouton {
+        opacity: 1;
+        transition: opacity 0.5s;
+      }
     }
 
     .en-tete {
@@ -77,11 +121,14 @@
     }
 
     .image {
+
       img {
         width: inherit;
         height: inherit;
         object-fit: cover;
       }
+
+
     }
   }
 }
