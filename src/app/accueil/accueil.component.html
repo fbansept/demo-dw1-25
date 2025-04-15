@@ -6,7 +6,7 @@
   />
   <select [(ngModel)]="categorieSelectionne">
     @for(categorie of categories; track $index) {
-      <option value="{{$index}}">{{ categorie.titre }}</option>
+      <option value="{{ categorie.id }}">{{ categorie.titre }}</option>
     }
   </select>
   <div class="bouton" (click)="onClicAjouterImage()">Ajouter image</div>
@@ -41,8 +41,8 @@
       @if (indexCategorie < categories.length - 1) {
         <div (click)="deplacerImage(indexCategorie, indexImage)" class="bouton bouton-moins">-</div>
       }
-      <div (click)="supprimerImage(indexCategorie, indexImage)" class="bouton bouton-supprimer">-</div>
-      <img src="{{ image }}" />
+      <div (click)="supprimerImage(image.id)" class="bouton bouton-supprimer">-</div>
+      <img src="{{ image.url }}" />
     </div>
 
     }

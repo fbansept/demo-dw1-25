@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {HttpClient} from '@angular/common/http';
 
 type Categorie = {
-  titre: string;
-  images: string[];
-};
+  id: number
+  titre: string
+  images: Image[]
+}
+
+type Image = {
+  id: number
+  url: string
+}
 
 @Component({
   selector: 'app-accueil',
@@ -18,57 +25,39 @@ export class AccueilComponent {
   categories: Categorie[] = [];
   categorieSelectionne = 0;
 
+  http = inject(HttpClient)
+
   ngOnInit() {
-    const enregistrement = localStorage.getItem('categories');
-
-    const categoriesParDefaut: Categorie[] = [
-      {
-        titre: 'A',
-        images: [],
-      },
-      {
-        titre: 'B',
-        images: [],
-      },
-      {
-        titre: 'C',
-        images: [],
-      },
-      {
-        titre: 'D',
-        images: [],
-      },
-      {
-        titre: 'E',
-        images: [],
-      },
-    ];
-
-    if (enregistrement == null) {
-      localStorage.setItem('categories', JSON.stringify(categoriesParDefaut));
-    }
-
-    this.categories = JSON.parse(localStorage.getItem('categories')!);
+    this.refresh()
   }
 
 
+  refresh() {
+    this.http
+      .get<Categorie[]>("http://localhost:5000/categories")
+      .subscribe(categories  => this.categories = categories)
+  }
 
   onClicAjouterImage() {
-    this.categories[this.categorieSelectionne].images.push(this.urlImageSaisie);
-    this.urlImageSaisie = '';
-
-    this.sauvegarde();
+    this.http
+      .post(
+        "http://localhost:5000/image",
+        {
+          url: this.urlImageSaisie,
+          categorie_id: this.categorieSelectionne
+        })
+      .subscribe(resultat => this.refresh())
   }
 
   onClicAjouterCategorie() {
-    this.categories.push(
-      {
-        titre : this.nomCategorieSaisie,
-        images : []
-      })
-    this.nomCategorieSaisie = '';
-
-    this.sauvegarde();
+    // this.categories.push(
+    //   {
+    //     titre : this.nomCategorieSaisie,
+    //     images : []
+    //   })
+    // this.nomCategorieSaisie = '';
+    //
+    // this.sauvegarde();
   }
 
   supprimerCategorie(indexCategorie : number) {
@@ -95,15 +84,23 @@ export class AccueilComponent {
     this.sauvegarde();
   }
 
-  supprimerImage(indexCategorie: number, indexImage : number) {
+  supprimerImage(idImage : number) {
 
-    // supprimer l'image à l'index "indexImage" du tableau "images"
-    // de l'ancienne categorie (à "indexCategorie")
-    this.categories[indexCategorie].images.splice(indexImage,1)
+    this.http.delete("http://localhost:5000/image/" + idImage)
+      .subscribe(resultat => this.refresh())
 
-    //on sauvegarde les categories
-    this.sauvegarde();
   }
+
+  //--- Exemple avec localstorage ------
+  // supprimerImage(indexCategorie: number, indexImage : number) {
+  //
+  //   // supprimer l'image à l'index "indexImage" du tableau "images"
+  //   // de l'ancienne categorie (à "indexCategorie")
+  //   this.categories[indexCategorie].images.splice(indexImage,1)
+  //
+  //   //on sauvegarde les categories
+  //   this.sauvegarde();
+  // }
 
   sauvegarde() {
     localStorage.setItem('categories', JSON.stringify(this.categories));
